@@ -15,13 +15,13 @@
 
 */
 import React from "react";
-
 // reactstrap components
 import {
   Button,
   Card,
   CardHeader,
   CardBody,
+  Modal,
   FormGroup,
   Form,
   Input,
@@ -32,30 +32,110 @@ import {
 // core components
 import ProfileHeader from "components/Headers/ProfileHeader.js";
 
+import firebase, { auth } from "config/firebase.js";
+
 class Profile extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      school_name:"",
-      e_mail:"",
-      first_name:"",
-      sur_name:"",
-      road:"",
-      house_number:"",
-      post_code:"",
-      city:"",
-      canton:"",
-      about_me:"",
-      price_per_hour:"",
-      price_per_subscription:"",
-      vehicle_switched:"",
-      vehicle_automatic:""
+      modalSucceed: false,
+      school_name: "",
+      e_mail: "",
+      first_name: "",
+      sur_name: "",
+      road: "",
+      house_number: "",
+      post_code: "",
+      city: "",
+      canton: "",
+      about_me: "",
+      price_per_hour: "",
+      price_per_subscription: "",
+      vehicle_switched: "",
+      vehicle_automatic: ""
     }
   }
 
+  componentWillMount() {
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        this.setState({
+          user_key: user.uid
+        })
+
+        const db = firebase.firestore();
+        // get user info
+        const user_doc = db.collection('users').doc(user.uid);
+        user_doc.get().then((doc) => {
+          if (!doc.exists) return;
+          const all_user_info = doc.data();
+          this.setState({
+            school_name: all_user_info.drivingSchoolName,
+            e_mail: all_user_info.email,
+            first_name: all_user_info.firstName,
+            sur_name: all_user_info.sureName,
+            road: all_user_info.street,
+            house_number: all_user_info.houseNumber,
+            post_code: all_user_info.zipCode,
+            city: all_user_info.city,
+            canton: all_user_info.canton
+          })
+        });
+
+        // get user additional info
+        const user_addition_doc = db.collection('instructor_addition_info').doc(user.uid);
+        user_addition_doc.get().then((doc) => {
+          if (!doc.exists) return;
+          const all_user_addition_info = doc.data();
+          this.setState({
+            about_me: all_user_addition_info.aboutMe,
+            price_per_hour: all_user_addition_info.pricePerHour,
+            price_per_subscription: all_user_addition_info.pricePer10Subscription,
+            vehicle_switched: all_user_addition_info.vehicleSwitched,
+            vehicle_automatic: all_user_addition_info.vehicleAutomatic
+          })
+        });
+      }
+    });
+  }
+
   updateProfile() {
-    console.log(this.state.school_name);
+    this.setState({
+      modalChange: true
+    })
+  }
+
+  updateExcute() {
+    const db = firebase.firestore();
+    const document1 = db.collection('users').doc(this.state.user_key);
+    const document2 = db.collection('instructor_addition_info').doc(this.state.user_key);
+
+    document1.set({
+      drivingSchoolName: this.state.school_name,
+      email: this.state.e_mail,
+      firstName: this.state.first_name,
+      sureName: this.state.sur_name,
+      street: this.state.road,
+      houseNumber: this.state.house_number,
+      zipCode: this.state.post_code,
+      city: this.state.city,
+      canton: this.state.canton
+    }, { merge: true }).then(() => {
+      debugger;
+      document2.set({
+        aboutMe: this.state.about_me,
+        pricePerHour: this.state.price_per_hour,
+        pricePer10Subscription: this.state.price_per_subscription,
+        vehicleSwitched: this.state.vehicle_switched,
+        vehicleAutomatic: this.state.vehicle_automatic,
+      }, { merge: true }).then(() => {
+        this.setState({
+          modalSucceed: true
+        })
+      });
+    }
+    );
   }
 
   showEvent(e) {
@@ -107,7 +187,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.school_name}
                               id="input-drivingSchoolName"
                               placeholder="Name der Fahrschule"
-                              onChange={(e) => {this.setState({"school_name":e.target.value})} }
+                              onChange={(e) => { this.setState({ "school_name": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -121,10 +201,10 @@ class Profile extends React.Component {
                               Email
                             </label>
                             <Input
-                            defaultValue={this.state.e_mail}
+                              defaultValue={this.state.e_mail}
                               id="input-email"
                               placeholder="Email"
-                              onChange={(e) => {this.setState({"e_mail":e.target.value})} }
+                              onChange={(e) => { this.setState({ "e_mail": e.target.value }) }}
                               type="email"
                             />
                           </FormGroup>
@@ -143,7 +223,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.first_name}
                               id="input-first-name"
                               placeholder="Vorname"
-                              onChange={(e) => {this.setState({"first_name":e.target.value})} }
+                              onChange={(e) => { this.setState({ "first_name": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -160,7 +240,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.sur_name}
                               id="input-last-name"
                               placeholder="Nachname"
-                              onChange={(e) => {this.setState({"sur_name":e.target.value})} }
+                              onChange={(e) => { this.setState({ "sur_name": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -181,7 +261,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.road}
                               id="input-street"
                               placeholder="Strasse"
-                              onChange={(e) => {this.setState({"road":e.target.value})} }
+                              onChange={(e) => { this.setState({ "road": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -198,7 +278,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.house_number}
                               id="input-houseNumber"
                               placeholder="Hausnummer"
-                              onChange={(e) => {this.setState({"house_number":e.target.value})} }
+                              onChange={(e) => { this.setState({ "house_number": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -217,7 +297,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.post_code}
                               id="input-zipCode"
                               placeholder="Postleitzahl"
-                              onChange={(e) => {this.setState({"post_code":e.target.value})} }
+                              onChange={(e) => { this.setState({ "post_code": e.target.value }) }}
                               type="number"
                             />
                           </FormGroup>
@@ -234,7 +314,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.city}
                               id="input-city"
                               placeholder="Stadt"
-                              onChange={(e) => {this.setState({"city":e.target.value})} }
+                              onChange={(e) => { this.setState({ "city": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -251,7 +331,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.canton}
                               id="input-canton"
                               placeholder="Canton"
-                              onChange={(e) => {this.setState({"canton":e.target.value})} }
+                              onChange={(e) => { this.setState({ "canton": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -268,7 +348,7 @@ class Profile extends React.Component {
                           placeholder="Ein paar Worte über mich"
                           rows="4"
                           type="textarea"
-                          onChange={(e) => {this.setState({"about_me":e.target.value})} }
+                          onChange={(e) => { this.setState({ "about_me": e.target.value }) }}
                         />
                       </FormGroup>
                       <Row>
@@ -284,7 +364,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.price_per_hour}
                               id="input-priceOneLesson"
                               placeholder="Preis pro Fahrstunde"
-                              onChange={(e) => {this.setState({"price_per_hour":e.target.value})} }
+                              onChange={(e) => { this.setState({ "price_per_hour": e.target.value }) }}
                               type="number"
                             />
                           </FormGroup>
@@ -301,7 +381,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.price_per_subscription}
                               id="input-priceTenLessons"
                               placeholder="Preis for 10er Abonnement"
-                              onChange={(e) => {this.setState({"price_per_subscription":e.target.value})} }
+                              onChange={(e) => { this.setState({ "price_per_subscription": e.target.value }) }}
                               type="number"
                             />
                           </FormGroup>
@@ -320,7 +400,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.vehicle_switched}
                               id="input-carManualGear"
                               placeholder="Fahrzeug Geschalten"
-                              onChange={(e) => {this.setState({"vehicle_switched":e.target.value})} }
+                              onChange={(e) => { this.setState({ "vehicle_switched": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -337,7 +417,7 @@ class Profile extends React.Component {
                               defaultValue={this.state.vehicle_automatic}
                               id="input-carAutomaticGear"
                               placeholder="Fahrzeug Automatik"
-                              onChange={(e) => {this.setState({"vehicle_automatic":e.target.value})} }
+                              onChange={(e) => { this.setState({ "vehicle_automatic": e.target.value }) }}
                               type="text"
                             />
                           </FormGroup>
@@ -345,13 +425,11 @@ class Profile extends React.Component {
                       </Row>
                     </div>
                     <Button
-                    className="btn-neutral"
-                    color="danger"
-                    data-calendar-view="basicWeek"
-                    onClick={() => this.updateProfile()}
-                    size="md"
-                  >
-                    Update
+                      color="danger"
+                      onClick={() => this.updateProfile()}
+                      size="md"
+                    >
+                      Update
                   </Button>
                   </Form>
                 </CardBody>
@@ -359,6 +437,52 @@ class Profile extends React.Component {
             </Col>
           </Row>
         </Container>
+        <Modal
+          isOpen={this.state.modalChange}
+          toggle={() => this.setState({ modalChange: false })}
+          className="modal-dialog-centered modal-secondary"
+        >
+          <div className="modal-body">
+            You really want to do the operation?
+                </div>
+          <div className="modal-footer">
+            <Button
+              color="primary"
+              onClick={() =>
+                this.setState({ modalChange: false }, () =>
+                  this.updateExcute()
+                )
+              }
+            >
+              OK
+                  </Button>
+            <Button
+              className="ml-auto"
+              color="link"
+              onClick={() => this.setState({ modalChange: false })}
+            >
+              Abort
+                  </Button>
+          </div>
+        </Modal>
+
+        <Modal
+          isOpen={this.state.modalSucceed}
+          toggle={() => this.setState({ modalSucceed: false })}
+          className="modal-dialog-centered modal-secondary"
+        >
+          <div className="modal-body">
+            Your operation has excuted succefully!
+                </div>
+          <div className="modal-footer">
+            <Button
+              color="danger"
+              onClick={()=>{this.setState({modalSucceed:false})} }
+            >
+              Close
+                  </Button>
+          </div>
+        </Modal>
       </>
     );
   }
