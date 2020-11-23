@@ -33,6 +33,35 @@ import {
 import ProfileHeader from "components/Headers/ProfileHeader.js";
 
 class Profile extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      school_name:"",
+      e_mail:"",
+      first_name:"",
+      sur_name:"",
+      road:"",
+      house_number:"",
+      post_code:"",
+      city:"",
+      canton:"",
+      about_me:"",
+      price_per_hour:"",
+      price_per_subscription:"",
+      vehicle_switched:"",
+      vehicle_automatic:""
+    }
+  }
+
+  updateProfile() {
+    console.log(this.state.school_name);
+  }
+
+  showEvent(e) {
+    console.log(e);
+  }
+
   render() {
     return (
       <>
@@ -47,14 +76,14 @@ class Profile extends React.Component {
                       <h3 className="mb-0">Profil bearbeiten</h3>
                     </Col>
                     <Col className="text-right" xs="4">
-                    Online Buchungen erhalten
+                      Online Buchungen erhalten
                       <>
 
-                      <label className="custom-toggle" htmlFor="input-showProfile">
-                      <Input type="checkbox" id="input-showProfile"  />
-                      <span className="custom-toggle-slider rounded-circle" />
-                      </label>
-                      <span className="clearfix" />
+                        <label className="custom-toggle" htmlFor="input-showProfile">
+                          <Input type="checkbox" id="input-showProfile" />
+                          <span className="custom-toggle-slider rounded-circle" />
+                        </label>
+                        <span className="clearfix" />
                       </>
                     </Col>
                   </Row>
@@ -75,9 +104,10 @@ class Profile extends React.Component {
                               Name der Fahrschule
                             </label>
                             <Input
-                              defaultValue="[currentUser.drivingSchoolName]"
+                              defaultValue={this.state.school_name}
                               id="input-drivingSchoolName"
                               placeholder="Name der Fahrschule"
+                              onChange={(e) => {this.setState({"school_name":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -91,9 +121,10 @@ class Profile extends React.Component {
                               Email
                             </label>
                             <Input
+                            defaultValue={this.state.e_mail}
                               id="input-email"
                               placeholder="Email"
-                              defaultValue="[currentUser.email]"
+                              onChange={(e) => {this.setState({"e_mail":e.target.value})} }
                               type="email"
                             />
                           </FormGroup>
@@ -109,9 +140,10 @@ class Profile extends React.Component {
                               Vorname
                             </label>
                             <Input
-                              defaultValue="[currentUser.firstName]"
+                              defaultValue={this.state.first_name}
                               id="input-first-name"
                               placeholder="Vorname"
+                              onChange={(e) => {this.setState({"first_name":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -125,9 +157,10 @@ class Profile extends React.Component {
                               Nachname
                             </label>
                             <Input
-                              defaultValue="[currentUser.sureName]"
+                              defaultValue={this.state.sur_name}
                               id="input-last-name"
                               placeholder="Nachname"
+                              onChange={(e) => {this.setState({"sur_name":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -145,9 +178,10 @@ class Profile extends React.Component {
                               Strasse
                             </label>
                             <Input
-                              defaultValue="[currentUser.street]"
+                              defaultValue={this.state.road}
                               id="input-street"
                               placeholder="Strasse"
+                              onChange={(e) => {this.setState({"road":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -161,9 +195,10 @@ class Profile extends React.Component {
                               Hausnummer
                             </label>
                             <Input
-                              defaultValue="[currentUser.houseNumber]"
+                              defaultValue={this.state.house_number}
                               id="input-houseNumber"
                               placeholder="Hausnummer"
+                              onChange={(e) => {this.setState({"house_number":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -179,9 +214,10 @@ class Profile extends React.Component {
                               PLZ
                             </label>
                             <Input
-                              defaultValue="[currentUser.zipCode]"
+                              defaultValue={this.state.post_code}
                               id="input-zipCode"
                               placeholder="Postleitzahl"
+                              onChange={(e) => {this.setState({"post_code":e.target.value})} }
                               type="number"
                             />
                           </FormGroup>
@@ -195,9 +231,10 @@ class Profile extends React.Component {
                               Stadt
                             </label>
                             <Input
-                              defaultValue="[currentUser.city]"
+                              defaultValue={this.state.city}
                               id="input-city"
                               placeholder="Stadt"
+                              onChange={(e) => {this.setState({"city":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -211,9 +248,10 @@ class Profile extends React.Component {
                               Kanton
                             </label>
                             <Input
+                              defaultValue={this.state.canton}
                               id="input-canton"
-                              placeholder="Kanton"
-                              defaultValue="[instructor_information.currentUser.canton]"
+                              placeholder="Canton"
+                              onChange={(e) => {this.setState({"canton":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -226,10 +264,11 @@ class Profile extends React.Component {
                       <FormGroup>
                         <label className="form-control-label">Über mich</label>
                         <Input
+                          defaultValue={this.state.about_me}
                           placeholder="Ein paar Worte über mich"
                           rows="4"
                           type="textarea"
-                          defaultValue="[instructor_information/currentUser.aboutMe]"
+                          onChange={(e) => {this.setState({"about_me":e.target.value})} }
                         />
                       </FormGroup>
                       <Row>
@@ -242,9 +281,10 @@ class Profile extends React.Component {
                               Preis pro Fahrstunde
                             </label>
                             <Input
-                              defaultValue="[instructor_information/currentUser/priceOneLesson]"
+                              defaultValue={this.state.price_per_hour}
                               id="input-priceOneLesson"
                               placeholder="Preis pro Fahrstunde"
+                              onChange={(e) => {this.setState({"price_per_hour":e.target.value})} }
                               type="number"
                             />
                           </FormGroup>
@@ -258,9 +298,10 @@ class Profile extends React.Component {
                               Preis pro 10er Abonnement
                             </label>
                             <Input
-                              defaultValue="[instructor_information/currentUser/priceTenLessons]"
+                              defaultValue={this.state.price_per_subscription}
                               id="input-priceTenLessons"
                               placeholder="Preis for 10er Abonnement"
+                              onChange={(e) => {this.setState({"price_per_subscription":e.target.value})} }
                               type="number"
                             />
                           </FormGroup>
@@ -276,9 +317,10 @@ class Profile extends React.Component {
                               Fahrzeug Geschalten
                             </label>
                             <Input
-                              defaultValue="[instructor_information/currentUser/carManualGear]"
+                              defaultValue={this.state.vehicle_switched}
                               id="input-carManualGear"
                               placeholder="Fahrzeug Geschalten"
+                              onChange={(e) => {this.setState({"vehicle_switched":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
@@ -292,46 +334,25 @@ class Profile extends React.Component {
                               Fahrzeug Automatik
                             </label>
                             <Input
-                              defaultValue="instructor_information/currentUser/carAutomaticGear"
+                              defaultValue={this.state.vehicle_automatic}
                               id="input-carAutomaticGear"
                               placeholder="Fahrzeug Automatik"
+                              onChange={(e) => {this.setState({"vehicle_automatic":e.target.value})} }
                               type="text"
                             />
                           </FormGroup>
                         </Col>
-                      </Row>                    
+                      </Row>
                     </div>
-                    {/*<hr className="my-4" />
-                    <h6 className="heading-small text-muted mb-4">Bilder</h6>
-                    <div className="pl-lg-4">
-                      <FormGroup>
-                        <label className="form-control-label">Profilbild</label>
-                        <Input
-                          placeholder="Ein paar Worte über mich"
-                          rows="4"
-                          type="text"
-                          defaultValue="[instructor_information/currentUser.aboutMe]"
-                        />
-                      </FormGroup>
-                      <Row>
-                        <Col md="12">
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="input-priceOneLesson"
-                            >
-                              Gallerie
-                            </label>
-                            <Input
-                              defaultValue="[instructor_information/currentUser/priceOneLesson]"
-                              id="input-priceOneLesson"
-                              placeholder="Preis pro Fahrstunde"
-                              type="text"
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>                    
-    </div>*/}
+                    <Button
+                    className="btn-neutral"
+                    color="danger"
+                    data-calendar-view="basicWeek"
+                    onClick={() => this.updateProfile()}
+                    size="md"
+                  >
+                    Update
+                  </Button>
                   </Form>
                 </CardBody>
               </Card>
